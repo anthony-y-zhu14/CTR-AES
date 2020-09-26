@@ -62,7 +62,6 @@ unsigned char setBit(unsigned char c, int n)
     return temp;
 }
 
-
 unsigned char clearBit(unsigned char c, int n)
 {
     unsigned char temp;
@@ -70,12 +69,10 @@ unsigned char clearBit(unsigned char c, int n)
     return temp;
 }
 
-
 unsigned char getBit(unsigned char c, int n)
 {
     return (c & 1 << n) >> n;
 }
-
 
 unsigned char counterProcess(unsigned char key, unsigned char counter){
     unsigned char temp_counter = counter;
@@ -95,28 +92,35 @@ unsigned char counterProcess(unsigned char key, unsigned char counter){
     return temp_counter;
 }
 
-
 unsigned char sourceByteProcess(unsigned char source, unsigned char counter){
     unsigned char temp = source;
     int result = counter % 9;
     if (result < 3){
-
+        for (int i = 0; i < 8; ++i) {
+            if (i % 2  == 0){
+                temp = (getBit(counter, i) ^ (getBit(temp, i) == 1)) ? setBit(temp, i) : clearBit(temp, i);
+            }
+        }
     }
     if (result >= 3 && result <= 5){
-
+        for (int i = 1; i < 8; ++i) {
+            if (i + 1 % 2 == 0){
+                temp = (getBit(counter, i) ^ (getBit(temp, i) == 1)) ? setBit(temp, i) : clearBit(temp, i);
+            }
+        }
     }
     if (result > 5){
-
+        for (int i = 0; i < 8; ++i) {
+            temp = (getBit(counter, i) ^ (getBit(temp, i) == 1)) ? setBit(temp, i) : clearBit(temp, i);
+        }
     }
     return temp;
 }
 
-
 void encrypt(unsigned char key, unsigned char counter){
     printf("\nYou may enter the message to be encrypted:\n");
-    char message[100]; //word limit for twitter
+    char message[MAX_BUF];
     fgets(message, sizeof(message), stdin);
-    printf("%s", message);
     for (int i = 0; i < sizeof(message); ++i) {
         counter = counterProcess(key, counter);
         counter++;
@@ -125,9 +129,7 @@ void encrypt(unsigned char key, unsigned char counter){
         printf("%c", message[i]);
         printf(" ");
     }
-    
 }
-
 
 void decrypt(unsigned char key, unsigned char counter){
 
