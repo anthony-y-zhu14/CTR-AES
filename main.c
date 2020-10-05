@@ -16,9 +16,8 @@ int main()
 {
   char str[8];
   int  choice;
-  unsigned char key = 178;
-  unsigned char counter = 40;
-  //71 73 227 33 2 32 150 11 175 158 79 77 162 101 197 247 116 219 37 18 76 0 254 120 210 32 146 13 58 32 73 226 195 226 102 109 115 129 170 192 19 50 30 162 124 46 33 73 76 187 245 46 62 122 138 36 80 109 176 91 113 224 109 222 219 11 175 49 97 43 61 4 53 113 99 69 77 231 43 123 121 125 143 79 224 40 105 79 84 117 248 55 197 62 42 159 225 204 14 162 213 24 164 -1
+  unsigned char key = 178; 
+  unsigned char counter = 40; //'('
 
 
   printf("\nYou may:\n");
@@ -48,58 +47,64 @@ int main()
   return 0;
 }
 
-unsigned char setBit(unsigned char c, int n)
+unsigned char setBit(unsigned char c, int n) //set the bit to 1 at position n
 {
     unsigned char temp;
     temp = c | (1 << n);
     return temp;
 }
 
-unsigned char clearBit(unsigned char c, int n)
+unsigned char clearBit(unsigned char c, int n) //clear the bit to 0 at position n
 {
     unsigned char temp;
     temp = c & (~(1 << n));
     return temp;
 }
 
-unsigned char getBit(unsigned char c, int n)
+unsigned char getBit(unsigned char c, int n) //return the bit at position n
 {
     return (c & 1 << n) >> n;
 }
 
-//Modifies the counter
+//Modifies the counter with the key
 unsigned char counterProcess(unsigned char key, unsigned char counter){
     unsigned char temp_counter = counter;
     int position1, position2;
     for (int i = 7; i >= 0; --i) {
         position1 = i;
+        // if the key bit at the current bit position is 1, then position 2 is set to one bit position to the left of the current bit position.
         if (getBit(key, position1) == 1){
             position2 = (position1 < 7) ? position1+1 : position1 - 7;
         }
+        // if the key bit at the current bit position is 0, then position 2 is set to two bit positions to the left of the current bit position
         else if (getBit(key, position1) == 0){
             position2 = (position1 < 6) ? position1 +2 : position1 - 6;
         }
-
-        temp_counter = ((getBit(temp_counter, position1) ^ getBit(temp_counter, position2)) == 1) ?
+        //xor the two temp counter bits found at positions 1 and 2, set the temp counter bit at the current bit position to the result of the xor operation
+        temp_counter = (getBit(temp_counter, position1) ^ getBit(temp_counter, position2)) == 1 ?
                 setBit(temp_counter, i): clearBit(temp_counter, i);
     }
     return temp_counter;
 }
 
-//Modifies the source byte using updated counter
+//Modifies the source byte with the updated counter
 unsigned char sourceByteProcess(unsigned char source, unsigned char counter){
     unsigned char temp = source;
     int result = counter % 9;
     if (result < 3){
         for (int i = 0; i < 8; ++i) {
+            //at every other bit position, compute the xor of the source bit and the counter bit, and set the temp value bit to the result of the xor operation
             if (i % 2  == 0){
                 temp = ((getBit(counter, i) ^ (getBit(temp, i))) == 1) ?
                         setBit(temp, i) : clearBit(temp, i);
             }
         }
     }
+
     if (result >= 3 && result <= 5){
         for (int i = 1; i < 8; ++i) {
+            //at every other bit position, compute the xor of the source bit and the counter bit, and set the temp value bit to the result of the xor operation
+
             if ((i + 1) % 2 == 0){
                 temp = ((getBit(counter, i) ^ (getBit(temp, i))) == 1) ?
                         setBit(temp, i) : clearBit(temp, i);
@@ -108,6 +113,7 @@ unsigned char sourceByteProcess(unsigned char source, unsigned char counter){
     }
     if (result > 5){
         for (int i = 0; i < 8; ++i) {
+            //at every bit position, compute the xor of the source bit and the counter bit, and set the temp value bit to the result of the xor operation
             temp = ((getBit(counter, i) ^ (getBit(temp, i))) == 1) ?
                     setBit(temp, i) : clearBit(temp, i);
         }
@@ -115,10 +121,15 @@ unsigned char sourceByteProcess(unsigned char source, unsigned char counter){
     return temp;
 }
 
+//encrypt users input
 void encrypt(unsigned char key, unsigned char counter){
     printf("\nYou may enter the message to be encrypted:\n");
     unsigned char message[MAX_BUF];
-    fgets(message, MAX_BUF, stdin);
+    fgets(message, MAX_BUF, stdin); //getting user input and store in an unsigned char array.
+
+    
+    printf("\nHere's your message after encryption: \n\n");
+
     for (int i = 0; message[i] != '\0'; ++i) {
         counter = counterProcess(key, counter);
         counter++;
@@ -128,20 +139,23 @@ void encrypt(unsigned char key, unsigned char counter){
     }
 }
 
+//decrypt the ciphertext from user
 void decrypt(unsigned char key, unsigned char counter){
     printf("\nYou may enter the message to be decrypted:\n");
-    int input[MAX_BUF];
-    unsigned char ciphertext[MAX_BUF];
+    int ciphertext[MAX_BUF];
     char c;
     int n = 0;
     while ((c = getchar()) != '\n'){
+        //scan the numerical value seperated by " " and store them in the int array, until the next line.
         ungetc(c, stdin);
-        scanf("%d", &input[n++]);
+        scanf("%d", &ciphertext[n++]);
     }
 
+    printf("\nHere's your message after decryption: \n\n");
 
-    for (int i = 0; input[i] != -1 && i < MAX_BUF; ++i) {
-        ciphertext[i] = (unsigned char) input[i];
+
+    for (int i = 0; ciphertext[i] != -1 && i < MAX_BUF; ++i) {
+        //decipher text until -1 is seen
         counter = counterProcess(key, counter);
         counter++;
         key++;
