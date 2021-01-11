@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <string.h>
-
 #define MAX_BUF  256
 
 unsigned char getBit(unsigned char, int);
@@ -8,44 +5,44 @@ unsigned char setBit(unsigned char, int);
 unsigned char clearBit(unsigned char, int);
 unsigned char counterProcess(unsigned char, unsigned char);
 unsigned char sourceByteProcess(unsigned char, unsigned char);
-void encrypt(unsigned char, unsigned char);
-void decrypt(unsigned char, unsigned char);
+void encrypt(unsigned char, unsigned char, unsigned char*);
+void decrypt(unsigned char, unsigned char, int[]);
 
 
-int main()
-{
-  char str[8];
-  int  choice;
-  unsigned char key = 178; 
-  unsigned char counter = 40; //'('
+// int main()
+// {
+//   char str[8];
+//   int  choice;
+//   unsigned char key = 178; 
+//   unsigned char counter = 40; //'('
 
 
-  printf("\nYou may:\n");
-  printf("  (1) Encrypt a message \n");
-  printf("  (2) Decrypt a message \n");
-  printf("\n  what is your selection: ");
-  fgets(str, sizeof(str), stdin);
-  sscanf(str, "%d", &choice);
+//   printf("\nYou may:\n");
+//   printf("  (1) Encrypt a message \n");
+//   printf("  (2) Decrypt a message \n");
+//   printf("\n  what is your selection: ");
+//   fgets(str, sizeof(str), stdin);
+//   sscanf(str, "%d", &choice);
 
-  switch (choice) {
+//   switch (choice) {
 
-    case 1:
-        encrypt(key, counter);
-      break;
+//     case 1:
+//         encrypt(key, counter);
+//       break;
 
-    case 2:
-        decrypt(key, counter);
+//     case 2:
+//         decrypt(key, counter);
 
-      break;
+//       break;
 
-    default:
-        printf("Thank you for Trying the Program.");
+//     default:
+//         printf("Thank you for Trying the Program.");
 
-      break;
-  }
+//       break;
+//   }
 
-  return 0;
-}
+//   return 0;
+// }
 
 unsigned char setBit(unsigned char c, int n) //set the bit to 1 at position n
 {
@@ -122,36 +119,36 @@ unsigned char sourceByteProcess(unsigned char source, unsigned char counter){
 }
 
 //encrypt users input
-void encrypt(unsigned char key, unsigned char counter){
-    printf("\nYou may enter the message to be encrypted:\n");
-    unsigned char message[MAX_BUF];
-    fgets(message, MAX_BUF, stdin); //getting user input and store in an unsigned char array.
+void encrypt(unsigned char key, unsigned char counter, unsigned char* message){
+    // printf("\nYou may enter the message to be encrypted:\n");
+    // unsigned char message[MAX_BUF];
+    // fgets(message, MAX_BUF, stdin); //getting user input and store in an unsigned char array.
 
     
-    printf("\nHere's your message after encryption: \n\n");
+    // printf("\nHere's your message after encryption: \n\n");
 
     for (int i = 0; message[i] != '\0'; ++i) {
         counter = counterProcess(key, counter);
         counter++;
         key++;
         message[i] = sourceByteProcess(message[i], counter);
-        printf("%d ", message[i]);
+        // printf("%d ", message[i]);
     }
 }
 
 //decrypt the ciphertext from user
-void decrypt(unsigned char key, unsigned char counter){
-    printf("\nYou may enter the message to be decrypted:\n");
-    int ciphertext[MAX_BUF];
-    char c;
-    int n = 0;
-    while ((c = getchar()) != '\n'){
-        //scan the numerical value seperated by " " and store them in the int array, until the next line.
-        ungetc(c, stdin);
-        scanf("%d", &ciphertext[n++]);
-    }
+void decrypt(unsigned char key, unsigned char counter, int ciphertext[]){
+    // printf("\nYou may enter the message to be decrypted:\n");
+    // int ciphertext[MAX_BUF];
+    // char c;
+    // int n = 0;
+    // while ((c = getchar()) != '\n'){
+    //     //scan the numerical value seperated by " " and store them in the int array, until the next line.
+    //     ungetc(c, stdin);
+    //     scanf("%d", &ciphertext[n++]);
+    // }
 
-    printf("\nHere's your message after decryption: \n\n");
+    // printf("\nHere's your message after decryption: \n\n");
 
 
     for (int i = 0; ciphertext[i] != -1 && i < MAX_BUF; ++i) {
@@ -160,7 +157,7 @@ void decrypt(unsigned char key, unsigned char counter){
         counter++;
         key++;
         ciphertext[i] = sourceByteProcess(ciphertext[i], counter);
-        printf("%c", ciphertext[i]);
+        // printf("%c", ciphertext[i]);
     }
 }
 
