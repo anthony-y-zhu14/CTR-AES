@@ -1,3 +1,5 @@
+#include <emscripten.h>
+
 #define MAX_BUF  256
 
 unsigned char getBit(unsigned char, int);
@@ -84,6 +86,7 @@ unsigned char counterProcess(unsigned char key, unsigned char counter){
     return temp_counter;
 }
 
+
 //Modifies the source byte with the updated counter
 unsigned char sourceByteProcess(unsigned char source, unsigned char counter){
     unsigned char temp = source;
@@ -119,6 +122,7 @@ unsigned char sourceByteProcess(unsigned char source, unsigned char counter){
 }
 
 //encrypt users input
+EMSCRIPTEN_KEEPALIVE
 void encrypt(unsigned char key, unsigned char counter, unsigned char* message){
     // printf("\nYou may enter the message to be encrypted:\n");
     // unsigned char message[MAX_BUF];
@@ -137,6 +141,7 @@ void encrypt(unsigned char key, unsigned char counter, unsigned char* message){
 }
 
 //decrypt the ciphertext from user
+EMSCRIPTEN_KEEPALIVE
 void decrypt(unsigned char key, unsigned char counter, int ciphertext[]){
     // printf("\nYou may enter the message to be decrypted:\n");
     // int ciphertext[MAX_BUF];
