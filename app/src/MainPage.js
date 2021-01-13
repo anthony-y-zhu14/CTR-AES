@@ -4,6 +4,7 @@ import Zoom from '@material-ui/core/Zoom';
 import { Container, Icon,  InputAdornment,  TextField,  Typography, Fab, ButtonGroup, Button } from '@material-ui/core';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
+import load from "./script/load"
 
 const useStyles = makeStyles((theme) => ({
     content_email: {
@@ -34,6 +35,9 @@ export default function MainPage () {
     const handleEncrypt = () => {
       setEncrypt(true);
       setDecrypt(false);
+      setTimeout(() => {
+        console.log(load.encrypt(key, counter, message));
+      }, 3000)
     }
 
     const handleDecrypt = () => {
